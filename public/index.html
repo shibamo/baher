@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <link href="vue-element-ui.css" media="all" rel="stylesheet" />
+</head>
+
+<body>
+  <div id="app" style="margin: 20px;">
+  <h2 align="center" style="margin: 10px auto;">Shopping List       <el-button type="info" @click="joinDlg()" v-if="userId==null">
+        Join
+      </el-button>          
+      <el-button type="danger" @click="exit()" v-if="isInList">
+        Exit({{userAlias}})
+      </el-button></h2>
+    <el-row :gutter="10">
+      <!--List-->
+        <template>
+          <el-table :data="listItems"  highlight-current-row
+          height="300" empty-text="No data"
+          @current-change="handleCurrentChange" border>
+            <el-table-column prop="itemName" label="Item" sortable>
+            </el-table-column>
+            <el-table-column prop="itemCount" label="Count" sortable>
+            </el-table-column>
+            <el-table-column prop="userAlias" label="Last Editor" sortable>
+            </el-table-column>            
+          </el-table>
+        </template>
+    </el-row>
+    <!--Item Editor-->
+    <el-row>
+      <label v-if="isInList">Item:</label> <input v-model="currentItem.itemName" auto-complete="off"  style="width: 190px;top: 13px; height: 30px; border-radius: 5px;border: 1px solid rgb(204, 204, 204);" v-if="isInList"></input>
+      <label v-if="isInList">Count:</label> <el-input-number v-model="currentItem.itemCount" :min="0" style="top: 13px; " v-if="isInList"></el-input-number>
+      <el-button type="success" @click="newListItem()" 
+        v-if="isInList"
+        :disabled="!userId || !currentItem.itemName || currentItem.itemCount==null">
+        Add New Item
+      </el-button>
+      <el-button type="info" @click="updateListItem()" v-if="isInList" :disabled="!currentItem.itemId">
+        Update Item
+      </el-button>
+
+    </el-row>
+
+    <!--Join list Dialog-->
+    <el-dialog title="Join" v-model="dialogFormVisible">
+      <el-form>
+        <el-form-item label="Your name">
+          <el-input v-model="userAlias" auto-complete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false" >Cancel</el-button>
+        <el-button type="primary" @click="joinNewUser()" :disabled="!userAlias">New User</el-button>
+        <el-button type="primary" @click="joinOldUser()" :disabled="!userAlias">Existing User</el-button>
+      </div>
+    </el-dialog>
+  </div>
+</body>
+
+<script src="axios.js"></script>
+<script src="vue-2.1.0.js"></script>
+<script src="vue-element-ui.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="client.js"></script>
+</html>
